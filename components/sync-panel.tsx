@@ -134,18 +134,22 @@ export function SyncPanel({
               <div className="space-y-5">
                 <div className="rounded-lg border border-line bg-white/[0.02] p-4 text-xs text-mute">
                   <p>
-                    Create a GitHub personal access token with the{" "}
-                    <span className="font-mono text-chalk">gist</span> scope,
-                    paste it below, then create a new private gist or paste an
-                    existing gist ID to sync across devices.
+                    Create a <span className="font-mono text-chalk">classic</span>{" "}
+                    GitHub personal access token with the{" "}
+                    <span className="font-mono text-chalk">gist</span> scope and
+                    paste it below. The link pre-fills the form for you.
+                  </p>
+                  <p className="mt-2 text-mute/80">
+                    <span className="text-loss">Note:</span> fine-grained PATs do
+                    not work — the Gist API only accepts classic tokens.
                   </p>
                   <a
-                    href="https://github.com/settings/tokens?type=beta"
+                    href="https://github.com/settings/tokens/new?description=MyStocks%20portfolio%20sync&scopes=gist"
                     target="_blank"
                     rel="noreferrer"
                     className="mt-2 inline-block text-chalk underline"
                   >
-                    Generate token →
+                    Generate classic token →
                   </a>
                 </div>
 
