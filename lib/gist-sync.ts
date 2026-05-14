@@ -101,3 +101,33 @@ export function readyForSync(s: Settings): SyncDeps | null {
   if (!s.githubToken || !s.gistId) return null;
   return { token: s.githubToken, gistId: s.gistId };
 }
+
+export type DiscoveredGist = {
+  id: string;
+  description: string | null;
+  updatedAt: string;
+  positionCount: number | null;
+};
+
+export async function listMyStocksGists(token: string): Promise<DiscoveredGist[]> {
+  const res = await fetch(`${API}/gists?per_page=100`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) {
+    throw new Error(`List gists failed: ${res.status} ${await res.text()}`);
+  }
+  const data = (await res.json()) as Array<{
+    id: string;
+    description: string | null;
+    updated_at: string;
+    files: Record<string, { filename: string }>;
+  }>;
+  return data
+    .filter((g) => g.files && GIST_FILENAME in g.files)
+    .map((g) => ({
+      id: g.id,
+      description: g.description,
+      updatedAt: g.updated_at,
+      positionCount: null,
+    }));
+}

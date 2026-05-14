@@ -3,11 +3,13 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { usePositions } from "@/hooks/use-positions";
 import { usePrices } from "@/hooks/use-prices";
+import { useVault } from "@/hooks/use-vault";
 import { TickerTape } from "@/components/ticker-tape";
 import { PortfolioSummary } from "@/components/portfolio-summary";
 import { PositionCard } from "@/components/position-card";
 import { PositionForm } from "@/components/position-form";
 import { SyncPanel } from "@/components/sync-panel";
+import { CredentialsVault } from "@/components/credentials-vault";
 import {
   evaluateAlerts,
   fireNotification,
@@ -32,6 +34,7 @@ export default function Page() {
     [positions],
   );
   const { quotes, error, lastUpdated } = usePrices(symbols);
+  const { vault, upsert: vaultUpsert, remove: vaultRemove } = useVault();
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Position | undefined>(undefined);
@@ -159,6 +162,27 @@ export default function Page() {
         {hydrated && positions.length === 0 && (
           <EmptyState onAdd={openAdd} />
         )}
+
+        {hydrated && (
+          <CredentialsVault
+            vault={vault}
+            activeGistId={settings.gistId}
+            onUse={(e) => {
+              setSettings((s) => ({
+                ...s,
+                githubToken: e.token,
+                gistId: e.gistId,
+              }));
+              vaultUpsert({
+                label: e.label,
+                token: e.token,
+                gistId: e.gistId,
+              });
+            }}
+            onDelete={vaultRemove}
+            onAdd={vaultUpsert}
+          />
+        )}
       </div>
 
       <PositionForm
@@ -174,6 +198,7 @@ export default function Page() {
         setSettings={setSettings}
         positions={positions}
         replaceAll={replaceAll}
+        saveToVault={vaultUpsert}
       />
     </main>
   );

@@ -36,3 +36,12 @@ export type Quote = {
 };
 
 export type Quotes = Record<string, Quote>;
+
+export type VaultEntry = {
+  id: string;
+  label: string;
+  token: string;
+  gistId: string;
+  createdAt: string;
+  lastUsedAt?: string;
+};

@@ -1,7 +1,8 @@
-import type { Position, Settings } from "./types";
+import type { Position, Settings, VaultEntry } from "./types";
 
 const POS_KEY = "mystocks:positions";
 const SET_KEY = "mystocks:settings";
+const VAULT_KEY = "mystocks:vault";
 const VER_KEY = "mystocks:schema-version";
 const CURRENT_VERSION = 1;
 
@@ -53,4 +54,21 @@ export function loadSettings(): Settings {
 export function saveSettings(settings: Settings): void {
   if (!isBrowser()) return;
   window.localStorage.setItem(SET_KEY, JSON.stringify(settings));
+}
+
+export function loadVault(): VaultEntry[] {
+  if (!isBrowser()) return [];
+  try {
+    const raw = window.localStorage.getItem(VAULT_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as VaultEntry[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveVault(vault: VaultEntry[]): void {
+  if (!isBrowser()) return;
+  window.localStorage.setItem(VAULT_KEY, JSON.stringify(vault));
 }
